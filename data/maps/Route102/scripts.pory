@@ -1,0 +1,489 @@
+raw`
+Route102_MapScripts::
+    map_script MAP_SCRIPT_ON_TRANSITION, Route102_OnTransition
+	map_script MAP_SCRIPT_ON_LOAD, ROUTE102_OnLoad
+	.byte 0
+
+Route102_EventScript_LittleBoy::
+	msgbox Route102_Text_ImNotVeryTall, MSGBOX_NPC
+	end
+
+Route102_EventScript_RouteSignOldale::
+	msgbox Route102_Text_RouteSignOldale, MSGBOX_SIGN
+	end
+
+Route102_EventScript_RouteSignPetalburg::
+	msgbox Route102_Text_RouteSignPetalburg, MSGBOX_SIGN
+	end
+
+Route102_EventScript_Boy::
+	msgbox Route102_Text_CatchWholeBunchOfPokemon, MSGBOX_NPC
+	end
+
+Route102_EventScript_Calvin::
+	trainerbattle_single TRAINER_CALVIN_1, Route102_Text_CalvinIntro, Route102_Text_CalvinDefeated, Route102_EventScript_CalvinRegisterMatchCallAfterBattle
+	specialvar VAR_RESULT, ShouldTryRematchBattle
+	goto_if_eq VAR_RESULT, TRUE, Route102_EventScript_CalvinRematch
+	setvar VAR_0x8004, TRAINER_CALVIN_1
+	specialvar VAR_RESULT, IsTrainerRegistered
+	goto_if_eq VAR_RESULT, FALSE, Route102_EventScript_CalvinTryRegister
+	msgbox Route102_Text_CalvinPostBattle, MSGBOX_DEFAULT
+	release
+	end
+
+Route102_EventScript_CalvinRegisterMatchCallAfterBattle::
+	special PlayerFaceTrainerAfterBattle
+	waitmovement 0
+	goto_if_set FLAG_HAS_MATCH_CALL, Route102_EventScript_CalvinRegisterMatchCall
+	release
+	end
+
+Route102_EventScript_CalvinRegisterMatchCall::
+	msgbox Route102_Text_CalvinRegisterShort, MSGBOX_DEFAULT
+	register_matchcall TRAINER_CALVIN_1
+	release
+	end
+
+Route102_EventScript_CalvinTryRegister::
+	goto_if_set FLAG_HAS_MATCH_CALL, Route102_EventScript_CalvinRegister
+	msgbox Route102_Text_CalvinPostBattle, MSGBOX_DEFAULT
+	release
+	end
+
+Route102_EventScript_CalvinRegister::
+	msgbox Route102_Text_CalvinRegister, MSGBOX_DEFAULT
+	register_matchcall TRAINER_CALVIN_1
+	release
+	end
+
+Route102_EventScript_CalvinRematch::
+	trainerbattle_rematch TRAINER_CALVIN_1, Route102_Text_CalvinRematchIntro, Route102_Text_CalvinRematchDefeated
+	msgbox Route102_Text_CalvinRematchPostBattle, MSGBOX_AUTOCLOSE
+	end
+
+Route102_EventScript_Rick::
+	trainerbattle_single TRAINER_RICK, Route102_Text_RickIntro, Route102_Text_RickDefeated
+	msgbox Route102_Text_RickPostBattle, MSGBOX_AUTOCLOSE
+	end
+
+Route102_EventScript_Tiana::
+	trainerbattle_single TRAINER_TIANA, Route102_Text_TianaIntro, Route102_Text_TianaDefeated
+	msgbox Route102_Text_TianaPostBattle, MSGBOX_AUTOCLOSE
+	end
+
+Route102_EventScript_Allen::
+	trainerbattle_single TRAINER_ALLEN, Route102_Text_AllenIntro, Route102_Text_AllenDefeated
+	msgbox Route102_Text_AllenPostBattle, MSGBOX_AUTOCLOSE
+	end
+
+Route102_Text_WatchMeCatchPokemon:
+	.string "WALLY: {PLAYER}…\n"
+	.string "POKéMON hide in tall grass like this,\l"
+	.string "don't they?\p"
+	.string "Please watch me and see if I can\n"
+	.string "catch one properly.\p"
+	.string "…Whoa!$"
+
+Route102_Text_WallyIDidIt:
+	.string "WALLY: I did it… It's my…\n"
+	.string "My POKéMON!$"
+
+Route102_Text_LetsGoBack:
+	.string "{PLAYER}, thank you!\n"
+	.string "Let's go back to the GYM!$"
+
+Route102_Text_ImNotVeryTall:
+	.string "I'm…not very tall, so I sink right\n"
+	.string "into tall grass.\p"
+	.string "The grass goes up my nose and…\n"
+	.string "Fwafwafwafwafwa…\p"
+	.string "Fwatchoo!$"
+
+Route102_Text_CatchWholeBunchOfPokemon:
+	.string "I'm going to catch a whole bunch of\n"
+	.string "POKéMON!$"
+
+Route102_Text_RouteSignOldale:
+	.string "ROUTE 102\n"
+	.string "{RIGHT_ARROW} OLDALE TOWN$"
+
+Route102_Text_RouteSignPetalburg:
+	.string "ROUTE 102\n"
+	.string "{LEFT_ARROW} PETALBURG CITY$"
+
+`
+// -------------------------------MAPSCRIPTS-------------------------------//
+//This script should trigger a Poochyena coming out of his hole and attack the player.
+//Atention! It is linked to the mapscript on Transition! (line needs to be taken out when transferring it into route 101)
+script Route102_OnTransition {
+    setflag(FLAG_ROUTE102_HIDE_POOCHYENA)
+	if(var(VAR_GRUNT_AQUA) != 2){ //VAR_GRUNT_AQUA is a VAR used for all the grunt. It's counted upwards! | already in use are Values 0, 1, 2 |
+		setflag(FLAG_ROUTE102_HIDE_GRUNT2)
+	}
+	else{
+		clearflag(FLAG_ROUTE102_HIDE_GRUNT2) //Makes the second aqua grunt visible when VAR_GRUNT_AQUA = 2
+	}
+
+    end
+}
+
+script ROUTE102_OnLoad {
+	if(var(VAR_ROUTE102_WATERFALL) == 1){
+		call(Route102_Waterfall_SecretPassageOpened)
+	}
+	end
+}
+
+// -------------------------------EVENTSCRIPTS-------------------------------//
+//Poochyena Event- & Battlescript
+script Route102_Eventscript_Trigger_Poochyena {
+	if(var(VAR_WILD_POOCHYENA) == 2){ //Important All Poochyenas share the same Var! => VAR_WILD_POOCHYENA. The Var is always set +1 after the next Poochyena appeared.
+        lockall						  //IMPORTANT: In Porymap, the VAR_VALUE has to be set +1 as well!
+	    playse(SE_EXIT)
+        clearflag(FLAG_ROUTE102_HIDE_POOCHYENA)
+        addobject(10)
+        waitse
+        getplayerxy(VAR_TEMP_1, VAR_TEMP_2)
+		if(var(VAR_TEMP_1) == 4 && var(VAR_TEMP_2) == 19){
+			applymovement(10, Route102_Poochyena_Attack_right)
+		}
+		elif(var(VAR_TEMP_1) == 3 && var(VAR_TEMP_2) == 19){
+			applymovement(10, Route102_Poochyena_Attack_middle)
+		}
+		elif(var(VAR_TEMP_1) == 2 && var(VAR_TEMP_2) == 19){
+			applymovement(10, Route102_Poochyena_Attack_left)
+		}
+		playmoncry(SPECIES_POOCHYENA, CRY_MODE_ENCOUNTER)
+	    waitmoncry
+        waitmovement(10)
+		setvar(VAR_WILD_POOCHYENA, 3) //Here the Var is set to 3 bc of story progression. (for the first wild poochyena the var was set to 1)
+        setflag(FLAG_ROUTE102_HIDE_POOCHYENA)
+	    setwildbattle(SPECIES_POOCHYENA, 10, ITEM_BLACK_GLASSES)
+	    dowildbattle
+	    if(var(VAR_RESULT) == B_OUTCOME_CAUGHT){
+		    call(Route102_Poochyena_Caught)
+	    }
+	    elif(var(VAR_RESULT) == B_OUTCOME_WON){
+		    call(Route102_Poochyena_Won_or_RanAway)
+	    }
+	    elif(var(VAR_RESULT) == B_OUTCOME_RAN){
+		    call(Route102_Poochyena_Won_or_RanAway)
+	    }
+
+	    waitmessage
+	    releaseall	
+    }
+}
+
+//Battleoutcome-Scripts: Poochyena
+script Route102_Poochyena_Caught {
+	lockall
+	fadescreen(FADE_TO_BLACK)
+	removeobject(10)
+	fadescreen(FADE_FROM_BLACK)
+	return
+}
+
+script Route102_Poochyena_Won_or_RanAway {
+	playse(SE_PIN)
+	delay(20)
+	applymovement(10, Route102_Poochyena_Exclamation)
+	waitmovement(0)
+	playmoncry(SPECIES_POOCHYENA, CRY_MODE_ENCOUNTER)
+	msgbox("POOOOCH!", MSGBOX_AUTOCLOSE)
+	waitmoncry
+	getplayerxy(VAR_TEMP_1, VAR_TEMP_2)
+	if(var(VAR_TEMP_1) == 4 && var(VAR_TEMP_2) == 19){
+		applymovement(10, Route102_Poochyena_Escape_right)
+	}
+	elif(var(VAR_TEMP_1) == 3 && var(VAR_TEMP_2) == 19){
+		applymovement(10, Route102_Poochyena_Escape_middle)
+	}
+	elif(var(VAR_TEMP_1) == 2 && var(VAR_TEMP_2) == 19){
+		applymovement(10, Route102_Poochyena_Escape_left)
+	}
+	waitmovement(0)
+	playse(SE_EXIT)
+	delay(10)
+    removeobject(10)
+	waitse
+	return
+}
+
+//
+script Route102_SignPost_PoochyenaHole {
+	msgbox("This is a Poochyena hole.", MSGBOX_AUTOCLOSE)
+	end
+}
+
+//This script activates a stone fall in order to reveal the secret passage behind the waterfall
+script Route102_SignPost_Waterfall {
+	if(var(VAR_ROUTE102_WATERFALL) == 0){
+		msgbox("There is a hole in the wall.\nWanna stick your hand inside?", MSGBOX_YESNO)
+		if(var(VAR_RESULT) == YES){
+			closemessage
+			call(Route102_FallingStoneAnimation)
+		}
+
+		else{
+        	msgbox("Didn't stick your hand inside.", MSGBOX_AUTOCLOSE)
+        	waitmessage
+    	}
+	}
+	else{
+		msgbox("You must have activated a\nhidden machanism.", MSGBOX_AUTOCLOSE)
+	}
+		
+	end
+}
+
+//This is the stonefall script that changes all the necassary tiles | NOT YET INCLUDED IN THE MAPSCRIPT!!! 
+script Route102_FallingStoneAnimation {
+	playse(SE_FALL)
+	delay(35)
+	setmetatile(29, 1, 0x1A2, TRUE) //impassable
+    special(DrawWholeMapView) //special(DrawWholeMapView) reloads the map with all the made changes
+    delay(5)
+	setmetatile(29, 1, 0x06C, TRUE) //impassable
+	setmetatile(29, 2, 0x1A2, TRUE) //impassable
+    special(DrawWholeMapView)
+	delay(5)
+	setmetatile(29, 2, 0x093, TRUE) //impassable
+	setmetatile(29, 3, 0x1A2, TRUE) //impassable
+    special(DrawWholeMapView)
+	delay(5)
+	setmetatile(29, 3, 0x09B, TRUE) //impassable
+	setmetatile(29, 4, 0x1A2, TRUE) //impassable
+    special(DrawWholeMapView)
+	delay(5)
+	setmetatile(29, 4, 0x07C, TRUE) //impassable
+	setmetatile(29, 5, 0x13F, TRUE) //impassable
+    special(DrawWholeMapView)
+	delay(5)
+	setmetatile(29, 5, 0x180, TRUE) //impassable
+	setmetatile(29, 6, 0x13F, TRUE) //impassable
+    special(DrawWholeMapView)
+	playse(SE_M_WATERFALL)
+	delay(5)
+	setmetatile(29, 7, 0x09F, TRUE) //impassable
+	special(DrawWholeMapView)
+	delay(5)
+	setmetatile(29, 8, 0x0A7, TRUE) //impassable
+    special(DrawWholeMapView)
+	delay(5)
+	setmetatile(29, 9, 0x071, FALSE) //passable
+    special(DrawWholeMapView)
+	delay(5)
+	setmetatile(29, 10, 0x07C, TRUE) //impassable
+    special(DrawWholeMapView)
+	delay(5)
+	setmetatile(29, 11, 0x189, FALSE) //passable
+    special(DrawWholeMapView)
+	setvar(VAR_ROUTE102_WATERFALL, 1)
+	return
+}
+
+//This script renders the map over the OnLoad_Mapscript with the story progression of the Waterfall Secret Passage
+script Route102_Waterfall_SecretPassageOpened {
+	setmetatile(29, 6, 0x13F, TRUE) //impassable
+	setmetatile(29, 7, 0x09F, TRUE) //impassable
+	setmetatile(29, 8, 0x0A7, TRUE) //impassable
+	setmetatile(29, 9, 0x071, FALSE) //passable
+	setmetatile(29, 10, 0x07C, TRUE) //impassable
+	setmetatile(29, 11, 0x189, TRUE) //impassable
+    special(DrawWholeMapView)
+	return
+}
+
+//Grunt Script for Grunt on Route102
+script Route102_EventScript_Grunt1 {
+	lockall
+	if(var(VAR_GRUNT_AQUA) == 0){
+	msgbox(Grunt_Route102_Prebattle , MSGBOX_AUTOCLOSE)
+	delay(20)
+	faceplayer
+	playse(SE_PIN)
+	applymovement(11, Route102_Grunt_Exclamation)
+	}
+
+	faceplayer
+	trainerbattle_single(TRAINER_GRUNT_ROUTE102, Grunt_Route102_Intro, Grunt_Route102_Outro, Route102_EventScript_GruntBeaten)
+    call(Route102_EventScript_GruntBeaten)
+	waitmessage
+	releaseall
+    end
+}
+//Important: For Story progression, a flag needs to be implemented to a later point in time.
+//This flag needs to be set, when something secial is achieved in the game.
+//Also this exact flag needs to be given to the GRUNT-OBJECT in Porymap in order to make him disappear.
+
+script Route102_EventScript_GruntBeaten {
+	msgbox(Grunt_Route102_PostBattle, MSGBOX_AUTOCLOSE)
+	waitmessage
+	applymovement(11, Route102_Grunt1_TurnAround)
+	setvar(VAR_GRUNT_AQUA, 1)
+	return
+}
+
+//This is the Triggerevent for both Aqua Grunts walking off into their secret waterfall hideout.
+script Route102_EventScript_TriggerGrunts {
+	lockall
+	applymovement(11, Route102_Trigger_Grunt1_TurnLeft)
+	applymovement(12, Route102_Trigger_Grunt2_TurnRight) //Grunts facing eachother 
+	delay(20)
+	applymovement(12, Route102_Trigger_Grunt2_WalkInPlaceRight) //Grunt2 is talking
+	waitmovement(12)
+	msgbox(Route102_Trigger_Grunt2_talk, MSGBOX_AUTOCLOSE)
+	applymovement(11, Route102_Trigger_Grunt1_WalkInPlaceLeft) //Grunt1 is talking
+	waitmovement(11)
+	msgbox(Route102_Trigger_Grunt1_talk, MSGBOX_AUTOCLOSE)
+	delay(10)
+	applymovement(11, Route102_Trigger_Grunts_TurnAround) //Grunts notice the player
+	applymovement(12, Route102_Trigger_Grunts_TurnAround) //Grunts notice the player
+	playse(SE_PIN)
+	delay(20)
+	applymovement(11, Route102_Grunt_Exclamation) //Grunts notice the player
+	applymovement(12, Route102_Grunt_Exclamation) //Grunts notice the player
+	waitmovement(11)
+	waitmovement(12)
+	msgbox(Route102_Trigger_Grunts_talk, MSGBOX_AUTOCLOSE) //Grunts shout
+	applymovement(11, Route102_Trigger_Grunt1_EscapePart1) //Grunts escape part1
+	applymovement(12, Route102_Trigger_Grunt2_EscapePart1) //Grunts escape part1
+	waitmovement(11)
+	waitmovement(12)
+	applymovement(OBJ_EVENT_ID_PLAYER, Route102_Player_BackUp) //Grunts escape part2 - pushing the player aside
+	applymovement(11, Route102_Trigger_Grunt1_EscapePart2) //Grunts escape part2 - pushing the player aside
+	applymovement(12, Route102_Trigger_Grunt2_EscapePart2) //Grunts escape part2 - pushing the player aside
+	waitmovement(11)
+	waitmovement(12)
+	setvar(VAR_GRUNT_AQUA, 3) //VAR_GRUNT_AQUA is set to 3! If reused, VALUE = 3 is needed!
+	setflag(FLAG_ROUTE102_HIDE_GRUNT1) //sets Grunts1 flag
+	setflag(FLAG_ROUTE102_HIDE_GRUNT2) //sets Grunts2 flag
+	removeobject(11) //removes Grunt1
+	removeobject(12) //removes Grunt2
+	delay(20)
+	releaseall
+	end
+}
+
+// -------------------------------MOVEMENTSCRIPTS-------------------------------//
+movement Route102_Poochyena_Exclamation {
+	emote_exclamation_mark
+}
+
+movement Route102_Poochyena_Attack_right {
+    walk_down * 3
+}
+
+movement Route102_Poochyena_Attack_middle {
+    walk_down
+	walk_left
+	walk_down * 2
+}
+
+movement Route102_Poochyena_Attack_left {
+    walk_down
+	walk_left * 2
+	walk_down * 2
+}
+
+movement Route102_Poochyena_Escape_right {
+	walk_in_place_fast_up
+    walk_up * 3
+}
+
+movement Route102_Poochyena_Escape_middle {
+	walk_in_place_fast_up
+    walk_up * 2
+	walk_right
+	walk_up
+}
+
+movement Route102_Poochyena_Escape_left {
+	walk_in_place_fast_up
+    walk_up * 2
+	walk_right * 2
+	walk_up
+}
+
+movement Route102_Grunt_Exclamation {
+	emote_exclamation_mark
+}
+
+movement Route102_Trigger_Grunt1_TurnLeft {
+	face_left
+}
+
+movement Route102_Trigger_Grunt2_TurnRight {
+	face_right
+}
+
+movement Route102_Trigger_Grunt2_WalkInPlaceRight {
+	walk_in_place_right
+}
+
+movement Route102_Trigger_Grunt1_WalkInPlaceLeft{
+	walk_in_place_left
+}
+
+movement Route102_Grunt1_TurnAround {
+	face_up
+}
+
+movement Route102_Trigger_Grunts_TurnAround {
+	face_down
+}
+
+movement Route102_Trigger_Grunt1_EscapePart1 {
+	walk_fast_down * 2
+}
+
+movement Route102_Trigger_Grunt2_EscapePart1 {
+	walk_fast_right
+	walk_fast_down
+}
+
+movement Route102_Player_BackUp {
+	lock_facing_direction
+	walk_fast_down
+	unlock_facing_direction
+}
+
+movement Route102_Trigger_Grunt1_EscapePart2 {
+	walk_fast_down
+	walk_fast_right * 6
+}
+
+movement Route102_Trigger_Grunt2_EscapePart2 {
+	walk_fast_down * 2
+	walk_fast_right * 6
+}
+
+// -------------------------------TEXTSCRIPTS-------------------------------//
+text Grunt_Route102_Prebattle {
+	"Mhh, this might be the ideal\nplace..."
+}
+
+text Grunt_Route102_Intro {
+	"Hey! what are you snooping\naround here?\pYou are gonna suffer kid!"
+}
+
+text Grunt_Route102_Outro {
+	"WTF?! What kinda kid are you?"
+}
+
+text Grunt_Route102_PostBattle {
+	"Piss off, I got things to do here."
+}
+
+text Route102_Trigger_Grunt2_talk {
+	"Is everything set up?"
+}
+
+text Route102_Trigger_Grunt1_talk {
+	"Yes, I am done here."
+}
+
+text Route102_Trigger_Grunts_talk {
+	"Ohhh no! Not this kid again!\nLet's get out of here!"
+}

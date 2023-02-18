@@ -1,0 +1,66 @@
+mapscripts LittlerootTown_NewProfessorBirchsLab_SecretRoom_MapScripts {
+    
+}
+
+script LittlerootTown_NewProfessorBirchsLab_SecretRoom_Mew{
+    
+    lockall
+    showmonpic(SPECIES_MEW, 10,3) // Shows a picture of the Pokemon to show which one is inside the Ball | IMPORTANT: Needs to be closed with macro: hidemonpic!!
+    msgbox("Do you want to take MEW with you?", MSGBOX_YESNO) // Yes or No Messagebox
+    if(var(VAR_RESULT) == YES){ // if-clause for answer Yes
+        givemon(SPECIES_MEW, 50, ITEM_CHERISH_BALL) //givemon-macro (SPECIES, Level, ITEM to hold) IMPORTANT: VAR_RESULT will be set to MON_GIVEN_TO_PARTY, MON_GIVEN_TO_PC, or MON_CANT_GIVE depending on the outcome. (this is given by the macro)
+        if(var(VAR_RESULT) == MON_GIVEN_TO_PARTY){ // if-clause for: Pokemon joins party
+            playfanfare(MUS_OBTAIN_ITEM) // play fanfare music
+            msgbox("Received Mew")
+            removeobject(1) // The 1 is the event object ID from porymap!
+            setflag(FLAG_RECEIVED_MEW) // This flag is set in order to not let the Pokeball appear again! (Flags have only 2 states ON and OFF)
+            call(NicknamePartyMon)
+        }
+        elif(var(VAR_RESULT) == MON_GIVEN_TO_PC){
+            playfanfare(MUS_OBTAIN_ITEM) // play fanfare music
+            msgbox("Received Mew")
+            removeobject(1) // The 1 is the event object ID from porymap!
+            setflag(FLAG_RECEIVED_MEW) // This flag is set in order to not let the Pokeball appear again! (Flags have only 2 states ON and OFF)
+            call(NicknameBoxMon)
+        }
+        else{
+            hidemonpic // hides the picture of the pokemon from earlier used macro: showmonpic
+            msgbox("No more room")
+        }
+    }
+    else{
+        hidemonpic // Also needs to be put here! You have to put it into every outcome in order to always hide the picture of the pokemon from macro showmonpic
+        msgbox(LittlerootTown_NewProfessorBirchsLab_SecretRoom_NotChosen)
+    }
+    waitmessage // waits for all the messages to end before script continues
+    releaseall // releases everthing
+    end // ends the script
+
+}
+
+script NicknamePartyMon{
+    
+    msgbox("Give it a Nickname?", MSGBOX_YESNO)
+    hidemonpic // Also needs to be put here! You have to put it into every outcome in order to always hide the picture of the pokemon from macro showmonpic
+    if(var(VAR_RESULT) == YES){
+        call(Common_EventScript_GetGiftMonPartySlot)
+        call(Common_EventScript_NameReceivedPartyMon)
+    }
+
+}
+
+script NicknameBoxMon{
+    
+    msgbox("Give it a Nickname?", MSGBOX_YESNO)
+    hidemonpic
+    if(var(VAR_RESULT) == YES){
+        call(Common_EventScript_NameReceivedBoxMon)
+    }
+    msgbox("Transferred to PC")
+
+}
+
+text LittlerootTown_NewProfessorBirchsLab_SecretRoom_NotChosen{ // this ist a plain text script. Usually this is used for long msgboxes with \p & \n.
+    "You did not choose the Pokemon"
+
+}

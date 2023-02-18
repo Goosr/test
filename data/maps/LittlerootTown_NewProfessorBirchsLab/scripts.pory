@@ -1,0 +1,149 @@
+//This mapscript is activated when the VAR is set to 1. It opens the secret passage in Birch's lab by moving the bookshelf to the right.
+//The Mapscript always loads right at the beginning when entering a new map. Good for story relevant metatile changes!
+mapscripts LittlerootTown_NewProfessorBirchsLab_MapScripts {
+    MAP_SCRIPT_ON_LOAD: LittlerootTown_NewProfessorBirchsLab_OnLoad //This mapscript keeps the hidden pathway opened, even if you leave the map(room).
+}
+
+
+//This script opens the secret passage in the bookshelf in Birch's New laboratory
+script LittlerootTown_NewProfessorBirchsLab_EventScript_Bookshelf {
+    lockall
+    if(var(VAR_SECRET_BUTTON) != 1){ //because of this if-clause, the question "Do you want to flip the lever?" is only asked the first time until you flip the lever.
+            msgbox("There is a lever behind\n one of the books.\p Do you want to flip it?", MSGBOX_YESNO) //shows a messagebox with a yes or no question.
+            if(var(VAR_RESULT) == YES){
+                call(LittlerootTown_NewProfessorBirchsLab_EventScript_Yes)
+            }
+
+            else{
+                msgbox("You didn't flip the lever.")
+                waitmessage
+            }
+    }
+    
+    else{
+        msgbox("The lever was already flipped.")
+    }
+    releaseall
+    end
+}
+
+script LittlerootTown_NewProfessorBirchsLab_OnLoad {
+    if(var(VAR_SECRET_BUTTON) == 1){ //checks the set variable and calls a script if variable = 1.
+        call(LittlerootTown_NewProfessorBirchsLab_EventScript_OpenSecretRoom)
+    }
+
+    if(var(VAR_SECRET_PC) == 1){ //checks the set variable and calls a script if variable = 1.
+        call(LittlerootTown_NewProfessorBirchsLab_EventScript_OpenedWall)
+    }
+    end
+}
+
+script LittlerootTown_NewProfessorBirchsLab_EventScript_Yes {
+        setvar(VAR_SECRET_BUTTON, 1) //The VAR is set to 1 by pressing the big red button. 
+        msgbox("You flipped the lever.")
+        waitmessage
+        playse(SE_BANG) //plays the song(noise) "SE_BANG"
+        call(LittlerootTown_NewProfessorBirchsLab_EventScript_OpenSecretRoom) //goes to function: LittlerootTown_NewProfessorBirchsLab_EventScript_OpenSecretRoom.
+        waitse //wait for the song(noise) "SE_BANG" to end
+        msgbox("The bookshelf moved aside!", MSGBOX_AUTOCLOSE)
+        waitmessage
+        return
+}
+
+script LittlerootTown_NewProfessorBirchsLab_EventScript_OpenSecretRoom {
+    setmetatile(2, 6, 0x27D, TRUE) //Entrance hidden pathway top, impassable | important note: TRUE makes tiles impassable and FALSE makes them passable
+    setmetatile(2, 7, 0x283, FALSE) //Entrance hidden pathway bottom, passable
+    setmetatile(3, 6, 0x22C, TRUE) //Bookshelf left top
+    setmetatile(3, 7, 0x234, TRUE) //Bookshelf left bottom
+    setmetatile(4, 6, 0x22D, TRUE) //Bookshelf right top
+    setmetatile(4, 7, 0x235, TRUE) //Bookshelf right bottom
+    setmetatile(4, 8, 0x23E, FALSE) //Shadow of the bookshelf right
+    special(DrawWholeMapView) //special(DrawWholeMapView) reloads the map with all the made changes
+    return
+}
+
+
+//This script opens the secret wall in Birchs New Lab.
+script LittlerootTown_NewProfessorBirchsLab_EventScript_SecretPC {
+    lockall
+    if(var(VAR_SECRET_PC) != 1){
+            msgbox(SecretPC1)
+            waitmessage
+            call(LittlerootTown_NewProfessorBirchsLab_EventScript_Wall)
+    }
+
+    else{
+        msgbox(SecretPC2)
+    }
+    releaseall
+    end
+}
+
+script LittlerootTown_NewProfessorBirchsLab_EventScript_Wall {
+    setvar(VAR_SECRET_PC, 1)
+    playse(SE_BANG) //plays the song(noise) "SE_BANG"
+    call(LittlerootTown_NewProfessorBirchsLab_EventScript_OpenedWall) //goes to function: LittlerootTown_NewProfessorBirchsLab_EventScript_OpenedWall.
+    waitse //wait for the song(noise) "SE_BANG" to end
+    msgbox(SecretPC3)
+    waitmessage
+    return
+}
+
+//This script sets the metatiles that are needed to enter the room on the right side of birchs new lab
+script LittlerootTown_NewProfessorBirchsLab_EventScript_OpenedWall {
+    setmetatile(18, 2, 0x273, TRUE) //impassable | important note: TRUE makes tiles impassable and FALSE makes them passable
+    setmetatile(18, 3, 0x270, TRUE) //impassable
+    setmetatile(18, 4, 0x278, TRUE) //impassable
+    setmetatile(18, 5, 0x271, FALSE) //passable
+    setmetatile(18, 6, 0x269, FALSE) //passable
+    setmetatile(18, 7, 0x268, FALSE) //passable
+    setmetatile(18, 8, 0x27B, TRUE) //impassable
+    setmetatile(19, 5, 0x277, FALSE) //passable
+    setmetatile(19, 6, 0x269, FALSE) //passable
+    setmetatile(19, 7, 0x269, FALSE) //passable
+    setmetatile(19, 8, 0x269, FALSE) //passable
+    special(DrawWholeMapView) //special(DrawWholeMapView) reloads the map with all the made changes
+    return
+}
+
+script LittlerootTown_NewProfessorBirchsLab_SignPost_PC {
+    msgbox(BasicPC, MSGBOX_AUTOCLOSE)
+    waitmessage
+    end
+}
+
+script LittlerootTown_NewProfessorBirchsLab_SignPost_Bookshelf {
+    msgbox(BasicBookshelf, MSGBOX_AUTOCLOSE)
+    waitmessage
+    end
+}
+
+script LittlerootTown_NewProfessorBirchsLab_SignPost_Mashine {
+    msgbox(Mashine, MSGBOX_AUTOCLOSE)
+    waitmessage
+    end
+}
+
+text SecretPC1 {
+    "This PC looks strange.\nIt is built into the wall.\pWhat if there is...?"
+}
+
+text SecretPC2 {
+    "By playing around with the PC\nYou activated a secret mechanism."
+}
+
+text SecretPC3 {
+    "The Wall opened up!"
+}
+
+text BasicPC {
+    "It's a PC used for research.\nBetter not mess around with it."
+}
+
+text BasicBookshelf {
+    "It's crammed with books on POKéMON."
+}
+
+text Mashine {
+    "It's a serious-looking mashine.\nThe PROF must use it for research."
+}
