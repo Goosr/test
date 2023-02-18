@@ -39,3 +39,5 @@ prefabs.json
 *.diff
 *.sym
 *.js
+poryscript/font_config.jsonZone.Identifier
+poryscript/poryscriptZone.Identifier
