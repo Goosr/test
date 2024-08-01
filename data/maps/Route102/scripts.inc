@@ -127,11 +127,18 @@ ROUTE102_OnLoad::
 	compare VAR_ROUTE102_WATERFALL, 1
 	goto_if_eq ROUTE102_OnLoad_2
 ROUTE102_OnLoad_1:
+	compare VAR_ROUTE102_STATE, 0
+	goto_if_eq ROUTE102_OnLoad_5
+ROUTE102_OnLoad_4:
 	end
 
 ROUTE102_OnLoad_2:
 	call Route102_Waterfall_SecretPassageOpened
 	goto ROUTE102_OnLoad_1
+
+ROUTE102_OnLoad_5:
+	call Route102_DoorLocked
+	goto ROUTE102_OnLoad_4
 
 
 Route102_Eventscript_Trigger_Poochyena::
@@ -425,6 +432,56 @@ Route102_EventScript_TriggerGrunts::
 	end
 
 
+Route102_EventScript_LockedDoor::
+	lockall
+	checkitem ITEM_LOCKPICK, 1
+	compare VAR_RESULT, TRUE
+	goto_if_eq Route102_EventScript_LockedDoor_2
+	msgbox LockedDoor
+Route102_EventScript_LockedDoor_1:
+	releaseall
+	end
+
+Route102_EventScript_LockedDoor_2:
+	compare VAR_ROUTE102_STATE, 0
+	goto_if_eq Route102_EventScript_LockedDoor_5
+	msgbox Route102_EventScript_LockedDoor_Text_1
+	goto Route102_EventScript_LockedDoor_1
+
+Route102_EventScript_LockedDoor_5:
+	msgbox LockedDoor
+	msgbox Route102_EventScript_LockedDoor_Text_0, MSGBOX_YESNO
+	compare VAR_RESULT, YES
+	goto_if_eq Route102_EventScript_LockedDoor_8
+	goto Route102_EventScript_LockedDoor_1
+
+Route102_EventScript_LockedDoor_8:
+	call Route102_PickLock
+	goto Route102_EventScript_LockedDoor_1
+
+
+Route102_PickLock::
+	setvar VAR_ROUTE102_STATE, 1
+	playse SE_CLICK
+	waitse
+	msgbox Route102_PickLock_Text_0
+	waitmessage
+	call Route102_DoorOpened
+	return
+
+
+Route102_DoorLocked::
+	setmetatile 43, 20, 0x290, TRUE
+	special DrawWholeMapView
+	return
+
+
+Route102_DoorOpened::
+	setmetatile 43, 20, 0x021, FALSE
+	special DrawWholeMapView
+	return
+
+
 Route102_Poochyena_Exclamation:
 	emote_exclamation_mark
 	step_end
@@ -554,6 +611,15 @@ Route102_SignPost_Waterfall_Text_1:
 Route102_SignPost_Waterfall_Text_2:
 	.string "You must have activated a\nhidden machanism.$"
 
+Route102_EventScript_LockedDoor_Text_0:
+	.string "Wanna try to pick the lock?$"
+
+Route102_EventScript_LockedDoor_Text_1:
+	.string "The door got picked.$"
+
+Route102_PickLock_Text_0:
+	.string "The lock gave in.$"
+
 Grunt_Route102_Prebattle::
 	.string "Mhh, this might be the ideal\nplace...$"
 
@@ -574,3 +640,6 @@ Route102_Trigger_Grunt1_talk::
 
 Route102_Trigger_Grunts_talk::
 	.string "Ohhh no! Not this kid again!\nLet's get out of here!$"
+
+LockedDoor::
+	.string "The door is locked.$"

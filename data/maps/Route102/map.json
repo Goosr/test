@@ -187,14 +187,14 @@
       "x": 43,
       "y": 20,
       "elevation": 0,
-      "dest_map": "MAP_ROUTE102",
+      "dest_map": "MAP_ROUTE102_LOCKED_APARTMENT",
       "dest_warp_id": "0"
     },
     {
       "x": 29,
       "y": 8,
       "elevation": 0,
-      "dest_map": "MAP_ROUTE102",
+      "dest_map": "MAP_ROUTE102_HIDDEN_CAVE",
       "dest_warp_id": "0"
     }
   ],
@@ -276,6 +276,14 @@
       "elevation": 0,
       "item": "ITEM_POKE_BALL",
       "flag": "FLAG_TEMP_1"
+    },
+    {
+      "type": "sign",
+      "x": 43,
+      "y": 20,
+      "elevation": 0,
+      "player_facing_dir": "BG_EVENT_PLAYER_FACING_ANY",
+      "script": "Route102_EventScript_LockedDoor"
     }
   ]
 }

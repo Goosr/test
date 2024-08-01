@@ -131,8 +131,14 @@ script ROUTE102_OnLoad {
 	if(var(VAR_ROUTE102_WATERFALL) == 1){
 		call(Route102_Waterfall_SecretPassageOpened)
 	}
+//Test code: ob ein Mapscript direkt 2 if clauses haben kann.
+	if(var(VAR_ROUTE102_STATE) == 0){
+        call(Route102_DoorLocked)
+    }
 	end
+//Test code Ende.
 }
+
 
 // -------------------------------EVENTSCRIPTS-------------------------------//
 //Poochyena Event- & Battlescript
@@ -366,6 +372,57 @@ script Route102_EventScript_TriggerGrunts {
 	end
 }
 
+
+//Following script is for the locked door of the apartment
+// Var = 0; Door is locked
+// Var = 1; Door is opened
+
+script Route102_EventScript_LockedDoor {
+	lockall
+	checkitem(ITEM_LOCKPICK, 1)
+	if(var(VAR_RESULT) == TRUE){
+		if(var(VAR_ROUTE102_STATE) == 0){
+			msgbox(LockedDoor)
+			msgbox("Wanna try to pick the lock?", MSGBOX_YESNO)
+			if(var(VAR_RESULT) == YES){
+				call(Route102_PickLock)
+			}
+		}
+		
+		else{
+            msgbox("The door got picked.")
+        }
+	}
+
+	else{
+		msgbox(LockedDoor)
+	}
+	releaseall
+	end	
+}
+
+script Route102_PickLock {
+	setvar(VAR_ROUTE102_STATE, 1)
+	playse(SE_CLICK)
+    waitse
+	msgbox("The lock gave in.")
+	waitmessage
+	call(Route102_DoorOpened)
+    return
+}
+
+script Route102_DoorLocked {
+	setmetatile(43, 20, 0x290, TRUE)
+	special(DrawWholeMapView)
+	return
+}
+
+script Route102_DoorOpened {
+	setmetatile(43, 20, 0x021, FALSE)
+	special(DrawWholeMapView)
+	return
+}
+
 // -------------------------------MOVEMENTSCRIPTS-------------------------------//
 movement Route102_Poochyena_Exclamation {
 	emote_exclamation_mark
@@ -486,4 +543,8 @@ text Route102_Trigger_Grunt1_talk {
 
 text Route102_Trigger_Grunts_talk {
 	"Ohhh no! Not this kid again!\nLet's get out of here!"
+}
+
+text LockedDoor {
+    "The door is locked."
 }

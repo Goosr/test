@@ -4460,6 +4460,26 @@
       "secondary_tileset": "gTileset_Cave",
       "border_filepath": "data/layouts/Littleroot_ForestCave/border.bin",
       "blockdata_filepath": "data/layouts/Littleroot_ForestCave/map.bin"
+    },
+    {
+      "id": "LAYOUT_ROUTE102_LOCKED_APARTMENT",
+      "name": "Route102_lockedApartment_Layout",
+      "width": 10,
+      "height": 10,
+      "primary_tileset": "gTileset_Building",
+      "secondary_tileset": "gTileset_MysteryEventsHouse",
+      "border_filepath": "data/layouts/Route102_lockedApartment/border.bin",
+      "blockdata_filepath": "data/layouts/Route102_lockedApartment/map.bin"
+    },
+    {
+      "id": "LAYOUT_ROUTE102_HIDDEN_CAVE",
+      "name": "Route102_HiddenCave_Layout",
+      "width": 20,
+      "height": 20,
+      "primary_tileset": "gTileset_General",
+      "secondary_tileset": "gTileset_Cave",
+      "border_filepath": "data/layouts/Route102_HiddenCave/border.bin",
+      "blockdata_filepath": "data/layouts/Route102_HiddenCave/map.bin"
     }
   ]
 }

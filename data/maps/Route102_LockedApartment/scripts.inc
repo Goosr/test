@@ -1,0 +1,2 @@
+Route102_LockedApartment_MapScripts::
+	.byte 0
