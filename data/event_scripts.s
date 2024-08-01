@@ -1070,6 +1070,6 @@ Common_EventScript_LegendaryFlewAway::
 
 	.include "data/maps/Littleroot_ForestCave/scripts.inc"
 
-	.include "data/maps/Route102_lockedApartment/scripts.inc"
+	.include "data/maps/Route102_LockedApartment/scripts.inc"
 
 	.include "data/maps/Route102_HiddenCave/scripts.inc"

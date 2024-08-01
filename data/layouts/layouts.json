@@ -4463,13 +4463,13 @@
     },
     {
       "id": "LAYOUT_ROUTE102_LOCKED_APARTMENT",
-      "name": "Route102_lockedApartment_Layout",
+      "name": "Route102_LockedApartment_Layout",
       "width": 10,
       "height": 10,
       "primary_tileset": "gTileset_Building",
       "secondary_tileset": "gTileset_MysteryEventsHouse",
-      "border_filepath": "data/layouts/Route102_lockedApartment/border.bin",
-      "blockdata_filepath": "data/layouts/Route102_lockedApartment/map.bin"
+      "border_filepath": "data/layouts/Route102_LockedApartment/border.bin",
+      "blockdata_filepath": "data/layouts/Route102_LockedApartment/map.bin"
     },
     {
       "id": "LAYOUT_ROUTE102_HIDDEN_CAVE",

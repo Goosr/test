@@ -640,6 +640,3 @@ Route102_Trigger_Grunt1_talk::
 
 Route102_Trigger_Grunts_talk::
 	.string "Ohhh no! Not this kid again!\nLet's get out of here!$"
-
-LockedDoor::
-	.string "The door is locked.$"

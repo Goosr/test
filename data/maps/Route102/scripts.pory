@@ -544,7 +544,3 @@ text Route102_Trigger_Grunt1_talk {
 text Route102_Trigger_Grunts_talk {
 	"Ohhh no! Not this kid again!\nLet's get out of here!"
 }
-
-text LockedDoor {
-    "The door is locked."
-}
