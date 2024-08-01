@@ -12438,7 +12438,7 @@ static const struct TrainerMonNoItemDefaultMoves sParty_MayLinkPlaceholder[] = {
 static const struct TrainerMonNoItemDefaultMoves sParty_Bashkim[] = {
     {
     .iv = 0,
-    .lvl = 12,
+    .lvl = 10,
     .species = SPECIES_WURMPLE,
     }
 };
