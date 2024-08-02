@@ -11506,7 +11506,7 @@
               {
                 "min_level": 30,
                 "max_level": 35,
-                "species": "SPECIES_ZUBAT"
+                "species": "SPECIES_GASTLY"
               },
               {
                 "min_level": 30,
@@ -11521,7 +11521,7 @@
               {
                 "min_level": 30,
                 "max_level": 35,
-                "species": "SPECIES_ZUBAT"
+                "species": "SPECIES_GASTLY"
               },
               {
                 "min_level": 30,
@@ -11529,24 +11529,24 @@
                 "species": "SPECIES_ZUBAT"
               },
               {
-                "min_level": 35,
-                "max_level": 38,
+                "min_level": 32,
+                "max_level": 35,
+                "species": "SPECIES_GOLBAT"
+              },
+              {
+                "min_level": 32,
+                "max_level": 35,
                 "species": "SPECIES_GOLBAT"
               },
               {
                 "min_level": 35,
-                "max_level": 38,
+                "max_level": 40,
                 "species": "SPECIES_GOLBAT"
               },
               {
-                "min_level": 39,
+                "min_level": 37,
                 "max_level": 41,
-                "species": "SPECIES_GOLBAT"
-              },
-              {
-                "min_level": 39,
-                "max_level": 41,
-                "species": "SPECIES_GOLBAT"
+                "species": "SPECIES_HAUNTER"
               },
               {
                 "min_level": 40,
