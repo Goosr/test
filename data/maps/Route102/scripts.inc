@@ -337,7 +337,7 @@ Route102_FallingStoneAnimation::
 	setmetatile 29, 7, 0x09F, TRUE
 	special DrawWholeMapView
 	delay 5
-	setmetatile 29, 8, 0x0A7, TRUE
+	setmetatile 29, 8, 0x0A7, FALSE
 	special DrawWholeMapView
 	delay 5
 	setmetatile 29, 9, 0x071, FALSE
@@ -350,12 +350,14 @@ Route102_FallingStoneAnimation::
 	special DrawWholeMapView
 	setvar VAR_ROUTE102_WATERFALL, 1
 	return
+	call ROUTE102_OnLoad
+	end
 
 
 Route102_Waterfall_SecretPassageOpened::
 	setmetatile 29, 6, 0x13F, TRUE
 	setmetatile 29, 7, 0x09F, TRUE
-	setmetatile 29, 8, 0x0A7, TRUE
+	setmetatile 29, 8, 0x0A7, FALSE
 	setmetatile 29, 9, 0x071, FALSE
 	setmetatile 29, 10, 0x07C, TRUE
 	setmetatile 29, 11, 0x189, TRUE

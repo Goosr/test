@@ -131,12 +131,11 @@ script ROUTE102_OnLoad {
 	if(var(VAR_ROUTE102_WATERFALL) == 1){
 		call(Route102_Waterfall_SecretPassageOpened)
 	}
-//Test code: ob ein Mapscript direkt 2 if clauses haben kann.
+
 	if(var(VAR_ROUTE102_STATE) == 0){
         call(Route102_DoorLocked)
     }
 	end
-//Test code Ende.
 }
 
 
@@ -243,7 +242,7 @@ script Route102_SignPost_Waterfall {
 	end
 }
 
-//This is the stonefall script that changes all the necassary tiles | NOT YET INCLUDED IN THE MAPSCRIPT!!! 
+//This is the stonefall script that changes all the necassary tiles
 script Route102_FallingStoneAnimation {
 	playse(SE_FALL)
 	delay(35)
@@ -274,7 +273,7 @@ script Route102_FallingStoneAnimation {
 	setmetatile(29, 7, 0x09F, TRUE) //impassable
 	special(DrawWholeMapView)
 	delay(5)
-	setmetatile(29, 8, 0x0A7, TRUE) //impassable
+	setmetatile(29, 8, 0x0A7, FALSE) //passable as this is the entrance to the HiddenCave
     special(DrawWholeMapView)
 	delay(5)
 	setmetatile(29, 9, 0x071, FALSE) //passable
@@ -287,13 +286,15 @@ script Route102_FallingStoneAnimation {
     special(DrawWholeMapView)
 	setvar(VAR_ROUTE102_WATERFALL, 1)
 	return
+	call(ROUTE102_OnLoad)
+	end
 }
 
 //This script renders the map over the OnLoad_Mapscript with the story progression of the Waterfall Secret Passage
 script Route102_Waterfall_SecretPassageOpened {
 	setmetatile(29, 6, 0x13F, TRUE) //impassable
 	setmetatile(29, 7, 0x09F, TRUE) //impassable
-	setmetatile(29, 8, 0x0A7, TRUE) //impassable
+	setmetatile(29, 8, 0x0A7, FALSE) //passable as this is the entrance to the HiddenCave
 	setmetatile(29, 9, 0x071, FALSE) //passable
 	setmetatile(29, 10, 0x07C, TRUE) //impassable
 	setmetatile(29, 11, 0x189, TRUE) //impassable
